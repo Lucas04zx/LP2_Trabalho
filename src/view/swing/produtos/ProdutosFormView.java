@@ -1,6 +1,6 @@
 package view.swing.produtos;
 
-import controller.ProdutosController;
+import controller.ProductController;
 import model.Produtos;
 
 import javax.swing.*;
@@ -14,12 +14,12 @@ class ProdutosFormView extends JDialog implements IProdutosFormView {
     private final JButton saveButton = new JButton("Salvar");
     private final JButton closeButton = new JButton("Fechar");
 
-    private ProdutosController controller;
+    private ProductController controller;
     private final boolean isNew;
     private final ProdutosListView parent;
     private Produtos produto;
 
-    public ProdutosFormView(ProdutosListView parent, Produtos produto, ProdutosController controller) {
+    public ProdutosFormView(ProdutosListView parent, Produtos produto, ProductController controller) {
         super(parent, true);
         this.controller = controller;
         this.controller.setProdutosFormView(this);

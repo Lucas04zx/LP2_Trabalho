@@ -2,12 +2,12 @@ package view.swing.user;
 
 import controller.UserController;
 import model.User;
+import model.UserGender;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ public class UserListView extends JDialog implements IUserListView {
         JScrollPane scrollPane = new JScrollPane(table);
 
         table.setRowHeight(36);
-
         table.setShowGrid(true);
         table.setGridColor(Color.LIGHT_GRAY);
 
@@ -45,14 +44,8 @@ public class UserListView extends JDialog implements IUserListView {
         popupMenu.add(deleteItem);
 
         table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                showPopup(e);
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                showPopup(e);
-            }
+            @Override public void mousePressed(MouseEvent e) { showPopup(e); }
+            @Override public void mouseReleased(MouseEvent e) { showPopup(e); }
             private void showPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     int row = table.rowAtPoint(e.getPoint());
@@ -103,12 +96,10 @@ public class UserListView extends JDialog implements IUserListView {
         JOptionPane.showMessageDialog(this, msg);
     }
 
-    // Atualiza lista após cadastro/edição/exclusão
     public void refresh() {
         controller.loadUsers();
     }
 
-    // Tabela de usuários
     static class UserTableModel extends AbstractTableModel {
         private final String[] columns = {"ID", "Nome", "Sexo", "Email"};
         private List<User> users = new ArrayList<>();
@@ -123,9 +114,7 @@ public class UserListView extends JDialog implements IUserListView {
         }
 
         @Override public int getRowCount() { return users.size(); }
-
         @Override public int getColumnCount() { return columns.length; }
-
         @Override public String getColumnName(int col) { return columns[col]; }
 
         @Override
@@ -133,12 +122,13 @@ public class UserListView extends JDialog implements IUserListView {
             User u = users.get(row);
             switch (col) {
                 case 0: return u.getId();
-                case 1: return u.getName();
-                case 2: return u.getGender();
+                case 1: return u.getNome();
+                case 2: return u.getSexo();
                 case 3: return u.getEmail();
                 default: return null;
             }
         }
+
         @Override public boolean isCellEditable(int row, int col) { return false; }
     }
 }

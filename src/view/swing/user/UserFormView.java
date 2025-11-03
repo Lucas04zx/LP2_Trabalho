@@ -9,8 +9,9 @@ import java.awt.*;
 
 class UserFormView extends JDialog implements IUserFormView {
     private final JTextField nameField = new JTextField(20);
-    private final JComboBox<String> genderBox = new JComboBox<>(new String[]{"M", "F"});
+    private final JComboBox<UserGender> genderBox = new JComboBox<>(UserGender.values());
     private final JTextField emailField = new JTextField(20);
+    private final JPasswordField passwordField = new JPasswordField(20);
     private final JButton saveButton = new JButton("Salvar");
     private final JButton closeButton = new JButton("Fechar");
     private UserController controller;
@@ -28,7 +29,7 @@ class UserFormView extends JDialog implements IUserFormView {
         this.isNew = (user == null);
 
         setTitle(isNew ? "Novo Usuário" : "Editar Usuário");
-        setSize(350, 220);
+        setSize(350, 250);
         setLocationRelativeTo(parent);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -50,11 +51,16 @@ class UserFormView extends JDialog implements IUserFormView {
         gbc.gridx = 1;
         add(emailField, gbc);
 
+        gbc.gridx = 0; gbc.gridy = 3;
+        add(new JLabel("Senha:"), gbc);
+        gbc.gridx = 1;
+        add(passwordField, gbc);
+
         JPanel btnPanel = new JPanel();
         btnPanel.add(saveButton);
         btnPanel.add(closeButton);
 
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         add(btnPanel, gbc);
 
         if (!isNew) setUserInForm(user);
@@ -66,17 +72,19 @@ class UserFormView extends JDialog implements IUserFormView {
     @Override
     public User getUserFromForm() {
         if (user == null) user = new User(0);
-        user.setName(nameField.getText());
-        user.setGender(genderBox.getSelectedItem().toString()  == "M" ? UserGender.M : UserGender.F);
+        user.setNome(nameField.getText());
+        user.setSexo((UserGender) genderBox.getSelectedItem());
         user.setEmail(emailField.getText());
+        user.setSenha(new String(passwordField.getPassword()));
         return user;
     }
 
     @Override
     public void setUserInForm(User user) {
-        nameField.setText(user.getName());
-        genderBox.setSelectedItem(user.getGender().toString());
+        nameField.setText(user.getNome());
+        genderBox.setSelectedItem(user.getSexo());
         emailField.setText(user.getEmail());
+        passwordField.setText(user.getSenha());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package view.swing.vendas;
 
-import controller.VendasController;
+import controller.SalesController;
 import model.Vendas;
 
 import javax.swing.*;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VendasListView extends JDialog implements IVendasListView {
-    private VendasController controller;
+    private SalesController controller;
     private final VendasTableModel tableModel = new VendasTableModel();
     private final JTable table = new JTable(tableModel);
 
     public VendasListView(JFrame parent) {
         super(parent, "Vendas", true);
-        this.controller = new VendasController();
+        this.controller = new SalesController();
         this.controller.setVendasListView(this);
 
         setSize(600, 400);

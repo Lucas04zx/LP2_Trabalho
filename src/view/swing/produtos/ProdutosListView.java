@@ -1,6 +1,6 @@
 package view.swing.produtos;
 
-import controller.ProdutosController;
+import controller.ProductController;
 import model.Produtos;
 
 import javax.swing.*;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutosListView extends JDialog implements IProdutosListView {
-    private ProdutosController controller;
+    private ProductController controller;
     private final ProdutosTableModel tableModel = new ProdutosTableModel();
     private final JTable table = new JTable(tableModel);
 
     public ProdutosListView(JFrame parent) {
         super(parent, "Produtos", true);
-        this.controller = new ProdutosController();
+        this.controller = new ProductController();
         this.controller.setProdutosListView(this);
 
         setSize(700, 400);

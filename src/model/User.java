@@ -1,70 +1,73 @@
 package model;
 
-import java.util.List;
-
 public class User {
-	private int id;
-	private String name;
-	private UserGender gender;
-	private String email;
-	private List<Post> posts;
-	
-	public User(int id) {
-		this.id = id;
-	}
+    private int id;
+    private String nome;
+    private UserGender sexo; // enum 'M' ou 'F'
+    private String email;
+    private String senha;
 
-	public String getName() {
-		return name;
-	}
+    public User(int id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public UserGender getGender() {
-		return gender;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public void setGender(UserGender gender) {
-		this.gender = gender;
-	}
+    public UserGender getSexo() {
+        return sexo;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setSexo(UserGender sexo) {
+        this.sexo = sexo;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public List<Post> getPosts() {
-		return posts;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPosts(List<Post> posts) {
-		this.posts = posts;
-	}
+    public String getSenha() {
+        return senha;
+    }
 
-	public int getId() {
-		return id;
-	}
-	
-	public void validate() {
-		if (name == null || name.isBlank()) {
-			throw new IllegalArgumentException("O nome do usuário não pode ser vazio.");
-		}
-		
-		if (gender == null) {
-			throw new IllegalArgumentException("O sexo do usuário é inválido.");
-		}
-		
-		if (email == null || email.isBlank() || !email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-			throw new IllegalArgumentException("O email do usuário é inválido.");
-		}	
-	}
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    public int getId() {
+        return id;
+    }
+
+    // Validação
+    public void validate() {
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("O nome do usuário não pode ser vazio.");
+        }
+
+        if (sexo == null) {
+            throw new IllegalArgumentException("O sexo do usuário é inválido.");
+        }
+
+        if (email == null || email.isBlank() || !email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new IllegalArgumentException("O email do usuário é inválido.");
+        }
+
+        if (senha == null || senha.isBlank()) {
+            throw new IllegalArgumentException("A senha do usuário não pode ser vazia.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

@@ -1,6 +1,6 @@
 package view.swing.vendas;
 
-import controller.VendasController;
+import controller.SalesController;
 import model.Vendas;
 
 import javax.swing.*;

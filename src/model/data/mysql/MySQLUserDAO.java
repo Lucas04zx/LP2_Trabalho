@@ -1,15 +1,10 @@
 package model.data.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.ModelException;
-import model.Post;
 import model.User;
 import model.UserGender;
 import model.data.DAOUtils;
@@ -18,178 +13,191 @@ import model.data.mysql.utils.MySQLConnectionFactory;
 
 public class MySQLUserDAO implements UserDAO {
 
-	@Override
-	public void save(User user) throws ModelException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+    @Override
+    public void save(User user) throws ModelException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-		try {
-			connection = MySQLConnectionFactory.getConnection();
+        try {
+            connection = MySQLConnectionFactory.getConnection();
 
-			String sqlIsert = " INSERT INTO "
-					        + " users VALUES "
-					        + " (DEFAULT, ?, ?, ?); ";
+            String sqlInsert = "INSERT INTO users (nome, sexo, email, senha) VALUES (?, ?, ?, ?);";
+            preparedStatement = connection.prepareStatement(sqlInsert);
 
-			preparedStatement = connection.prepareStatement(sqlIsert);
-			preparedStatement.setString(1, user.getName());
-			preparedStatement.setString(2, user.getGender().toString());
-			preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(1, user.getNome());
+            preparedStatement.setString(2, user.getSexo().toString());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getSenha());
 
-			preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-		} catch (SQLException sqle) {
-			DAOUtils.sqlExceptionTreatement("Erro ao inserir user do BD.", sqle);
-		} catch (ModelException me) {
-			throw me;
-		} 
-		finally {
-			DAOUtils.close(preparedStatement);
-			DAOUtils.close(connection);
-		}
-	}
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao inserir user no BD.", sqle);
+        } finally {
+            DAOUtils.close(preparedStatement);
+            DAOUtils.close(connection);
+        }
+    }
 
-	@Override
-	public void update(User user) throws ModelException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+    @Override
+    public void update(User user) throws ModelException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-		try {
-			connection = MySQLConnectionFactory.getConnection();
+        try {
+            connection = MySQLConnectionFactory.getConnection();
 
-			String sqlUpdate = " UPDATE users "
-					         + " set "
-					         + " nome = ?, "
-					         + " sexo = ?, "
-					         + " email = ? "
-					         + " WHERE id = ?; ";
+            String sqlUpdate = "UPDATE users SET nome = ?, sexo = ?, email = ?, senha = ? WHERE id = ?;";
+            preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement = connection.prepareStatement(sqlUpdate);
-			preparedStatement.setString(1, user.getName());
-			preparedStatement.setString(2, user.getGender().toString());
-			preparedStatement.setString(3, user.getEmail());
-			preparedStatement.setInt(4, user.getId());
+            preparedStatement.setString(1, user.getNome());
+            preparedStatement.setString(2, user.getSexo().toString());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getSenha());
+            preparedStatement.setInt(5, user.getId());
 
-			preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-		} catch (SQLException sqle) {
-			DAOUtils.sqlExceptionTreatement("Erro ao atualizar user do BD.", sqle);
-		} catch (ModelException me) {
-			throw me;
-		} 
-		finally {
-			DAOUtils.close(preparedStatement);
-			DAOUtils.close(connection);
-		}		
-	}
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao atualizar user no BD.", sqle);
+        } finally {
+            DAOUtils.close(preparedStatement);
+            DAOUtils.close(connection);
+        }
+    }
 
-	@Override
-	public void delete(User user) throws ModelException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+    @Override
+    public void delete(User user) throws ModelException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-		try {
-			connection = MySQLConnectionFactory.getConnection();
+        try {
+            connection = MySQLConnectionFactory.getConnection();
 
-			String sqlUpdate = " DELETE FROM users WHERE id = ?; ";
+            String sqlDelete = "DELETE FROM users WHERE id = ?;";
+            preparedStatement = connection.prepareStatement(sqlDelete);
+            preparedStatement.setInt(1, user.getId());
 
-			preparedStatement = connection.prepareStatement(sqlUpdate);
-			preparedStatement.setInt(1, user.getId());
+            preparedStatement.executeUpdate();
 
-			preparedStatement.executeUpdate();
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao deletar user no BD.", sqle);
+        } finally {
+            DAOUtils.close(preparedStatement);
+            DAOUtils.close(connection);
+        }
+    }
 
-		} catch (SQLException sqle) {
-			DAOUtils.sqlExceptionTreatement("Erro ao deletar user do BD.", sqle);
-		} catch (ModelException me) {
-			throw me;
-		} 
-		finally {
-			DAOUtils.close(preparedStatement);
-			DAOUtils.close(connection);
-		}	
-	}
+    @Override
+    public List<User> findAll() throws ModelException {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        List<User> usersList = new ArrayList<>();
 
-	@Override
-	public List<User> findAll() throws ModelException {
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<User> usersList = new ArrayList<>();
+        try {
+            connection = MySQLConnectionFactory.getConnection();
+            statement = connection.createStatement();
+            rs = statement.executeQuery("SELECT * FROM users ORDER BY nome;");
 
-		try {
-			connection = MySQLConnectionFactory.getConnection();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                UserGender sexo = UserGender.valueOf(rs.getString("sexo"));
+                String email = rs.getString("email");
+                String senha = rs.getString("senha");
 
-			statement = connection.createStatement();
-			String sqlSelect = " SELECT * FROM users order by nome; ";
+                User user = new User(id);
+                user.setNome(nome);
+                user.setSexo(sexo);
+                user.setEmail(email);
+                user.setSenha(senha);
 
-			rs = statement.executeQuery(sqlSelect);
+                usersList.add(user);
+            }
 
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String name = rs.getString("nome");
-				
-				String genderStr = rs.getString("sexo");
-				UserGender gender = 
-						genderStr.equals("M") ? UserGender.M : UserGender.F;
-				
-				String email = rs.getString("email");
-				
-				User user = new User(id);
-				user.setName(name);
-				user.setGender(gender);
-				user.setEmail(email);
-				
-				List<Post> posts = new MySQLPostDAO().findByUserId(id);
-				user.setPosts(posts);
-				
-				usersList.add(user);
-			}
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao carregar users do BD.", sqle);
+        } finally {
+            DAOUtils.close(rs);
+            DAOUtils.close(statement);
+            DAOUtils.close(connection);
+        }
 
-		} catch (SQLException sqle) {
-			DAOUtils.sqlExceptionTreatement("Erro ao carregar posts do BD.", sqle);
-		} finally {
-			DAOUtils.close(rs);
-			DAOUtils.close(statement);
-			DAOUtils.close(connection);
-		}
+        return usersList;
+    }
 
-		return usersList;
-	}
+    @Override
+    public User findById(int id) throws ModelException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        User user = null;
 
-	@Override
-	public User findById(int id) throws ModelException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet rs = null;
-		User user = null;
+        try {
+            connection = MySQLConnectionFactory.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE id = ?;");
+            preparedStatement.setInt(1, id);
+            rs = preparedStatement.executeQuery();
 
-		try {
-			connection = MySQLConnectionFactory.getConnection();
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                UserGender sexo = UserGender.valueOf(rs.getString("sexo"));
+                String email = rs.getString("email");
+                String senha = rs.getString("senha");
 
-			String sqlSelect = "SELECT * FROM users WHERE id = ?;";
-			preparedStatement = connection.prepareStatement(sqlSelect);
-			preparedStatement.setInt(1, id);
+                user = new User(id);
+                user.setNome(nome);
+                user.setSexo(sexo);
+                user.setEmail(email);
+                user.setSenha(senha);
+            }
 
-			rs = preparedStatement.executeQuery();
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao buscar user por id no BD.", sqle);
+        } finally {
+            DAOUtils.close(rs);
+            DAOUtils.close(preparedStatement);
+            DAOUtils.close(connection);
+        }
 
-			if (rs.next()) {
-				String name = rs.getString("nome");
-				String genderStr = rs.getString("sexo");
-				UserGender gender = genderStr.equals("M") ? UserGender.M : UserGender.F;
-				String email = rs.getString("email");
+        return user;
+    }
+    
+    @Override
+    public User findByEmail(String email) throws ModelException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        User user = null;
 
-				user = new User(id);
-				user.setName(name);
-				user.setGender(gender);
-				user.setEmail(email);
-			}
-		} catch (SQLException sqle) {
-			DAOUtils.sqlExceptionTreatement("Erro ao buscar user por id no BD.", sqle);
-		} finally {
-			DAOUtils.close(rs);
-			DAOUtils.close(preparedStatement);
-			DAOUtils.close(connection);
-		}
+        try {
+            connection = MySQLConnectionFactory.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE email = ?;");
+            preparedStatement.setString(1, email);
+            rs = preparedStatement.executeQuery();
 
-		return user;
-	}
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                UserGender sexo = UserGender.valueOf(rs.getString("sexo"));
+                String senha = rs.getString("senha");
+
+                user = new User(id);
+                user.setNome(nome);
+                user.setSexo(sexo);
+                user.setEmail(email);
+                user.setSenha(senha);
+            }
+        } catch (SQLException sqle) {
+            DAOUtils.sqlExceptionTreatement("Erro ao buscar user por email no BD.", sqle);
+        } finally {
+            DAOUtils.close(rs);
+            DAOUtils.close(preparedStatement);
+            DAOUtils.close(connection);
+        }
+
+        return user;
+    }
+
 }

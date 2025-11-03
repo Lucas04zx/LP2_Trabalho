@@ -1,8 +1,8 @@
 package view.swing;
 
 import view.swing.user.UserListView;
-import view.swing.post.PostListView;
 import view.swing.vendas.VendasListView;
+import view.swing.produtos.ProdutosListView; // <- import do Produtos
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,19 +25,19 @@ public class MainView extends JFrame {
         menu.add(userListItem);
         menuBar.add(menu);
 
-        // Menu Posts
-        JMenu postMenu = new JMenu("Posts");
-        JMenuItem postListItem = new JMenuItem("Listar Posts");
-        postListItem.addActionListener(e -> new PostListView(this).setVisible(true));
-        postMenu.add(postListItem);
-        menuBar.add(postMenu);
-
         // Menu Vendas
         JMenu vendasMenu = new JMenu("Vendas");
         JMenuItem vendasListItem = new JMenuItem("Listar Vendas");
         vendasListItem.addActionListener(e -> new VendasListView(this).setVisible(true));
         vendasMenu.add(vendasListItem);
         menuBar.add(vendasMenu);
+
+        // Menu Produtos
+        JMenu produtosMenu = new JMenu("Produtos");
+        JMenuItem produtosListItem = new JMenuItem("Listar Produtos");
+        produtosListItem.addActionListener(e -> new ProdutosListView(this).setVisible(true));
+        produtosMenu.add(produtosListItem);
+        menuBar.add(produtosMenu);
 
         // Adiciona um menu vazio para empurrar o próximo menu para a direita
         menuBar.add(Box.createHorizontalGlue());

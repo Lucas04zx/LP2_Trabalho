@@ -17,7 +17,7 @@ public class MySQLConnectionFactory {
 
 	// Credenciais
 	private static final String USER = "root";
-	private static final String PW = "";
+	private static final String PW = "Lucas040306*";
 	
 	public static Connection getConnection() throws ModelException {
 

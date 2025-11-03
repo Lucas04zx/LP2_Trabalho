@@ -1,6 +1,6 @@
 package view.swing.vendas;
 
-import controller.VendasController;
+import controller.SalesController;
 import model.Vendas;
 
 import javax.swing.*;
@@ -12,12 +12,12 @@ class VendasFormView extends JDialog implements IVendasFormView {
     private final JTextField valorTotalField = new JTextField(10);
     private final JButton saveButton = new JButton("Salvar");
     private final JButton closeButton = new JButton("Fechar");
-    private VendasController controller;
+    private SalesController controller;
     private final boolean isNew;
     private final VendasListView parent;
     private Vendas venda;
 
-    public VendasFormView(VendasListView parent, Vendas venda, VendasController controller) {
+    public VendasFormView(VendasListView parent, Vendas venda, SalesController controller) {
         super(parent, true);
         this.controller = controller;
         this.controller.setVendasFormView(this);
